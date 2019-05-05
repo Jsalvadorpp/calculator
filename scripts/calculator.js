@@ -6,7 +6,8 @@ const clearButton = document.querySelector("#buttons-container .clear");
 var value = 0;
 const inputState = {
     waitingForValue: 1, //can't input an operator
-    waitingForOperator: 2 //cant input an operator
+    waitingForOperator: 2, //cant input an operator
+    displayingResult: 3
 }
 const operatorPrecedence = {
     "+": 1,
@@ -16,36 +17,28 @@ const operatorPrecedence = {
 }
 var displayState = inputState.waitingForValue;
 var expression = [];
-var valueStack = [];
-
-
-
 display.textContent = "0";
-
 
 numberButtons.forEach( button => button.addEventListener("click",createOperand));
 operatorButtons.forEach( button => button.addEventListener("click",addElementToExpression));
 resultButton.addEventListener("click",displayResult);
 clearButton.addEventListener("click",clear);
 
-
 function displayResult(){
 
     let result;
     let postFixExpression;
+    value = +display.textContent;
 
     if(displayState == inputState.waitingForOperator){
 
         expression.push(value);
-        console.log(expression);
         postFixExpression = convertToPostfix(expression);
-        console.log("postfix = ",postFixExpression);
         result = evaluatePostfix(postFixExpression);
         value = result;
-        console.log("result = ",result);
         display.textContent = result;
+        displayState = inputState.displayingResult;
     }
-
 }
 function evaluatePostfix(expresion){
 
@@ -72,8 +65,6 @@ function evaluatePostfix(expresion){
     //the final result is top of the valueStack
     return valueStack.pop();
 }
-
-
 
 function convertToPostfix(infixExpression){
 
@@ -121,52 +112,44 @@ function convertToPostfix(infixExpression){
     return postfixExpression;
 }
 
-
-
-
 function createOperand(){
 
-    displayState = inputState.waitingForOperator;
-
-    if(display.textContent == "0"){
+    if(displayState == inputState.waitingForValue || displayState == inputState.displayingResult){
         display.textContent = this.getAttribute("data-value");
-    }else{
+    }else if(displayState == inputState.waitingForOperator){
         display.textContent += this.getAttribute("data-value");
     }
-    value = +display.textContent;
+
+    displayState = inputState.waitingForOperator;
 }
 
 function addElementToExpression(){
 
-    if(displayState == inputState.waitingForOperator){
+    value = +display.textContent;
+
+    if(displayState == inputState.waitingForOperator || displayState == inputState.displayingResult){
         let operator = this.getAttribute("data-operator");
 
         expression.push(value);
         expression.push(operator);
-        
         clear();
-        console.log(expression);
 
     }else if(displayState == inputState.waitingForValue){
         return;
     }
 }
 
-
 function operate(operator,number1,number2){
-    let result;
 
     if(operator == "+"){
-        result = number2 + number1;
+        return number2 + number1;
     }else if(operator == "-"){
-        result = number2 - number1;
+        return number2 - number1;
     }else if(operator == "*"){
-        result = number2*number1;
+        return number2*number1;
     }else if(operator == "/"){
-        result = number2/number1;
+        return number2/number1;
     }
-
-    return result;
 }
 
 function clear(){
