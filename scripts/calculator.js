@@ -5,6 +5,7 @@ const resultButton = document.querySelector("#buttons-container .equal");
 const clearButton = document.querySelector("#buttons-container .clear");
 const signButton = document.querySelector("#buttons-container .sign");
 const decimalButton = document.querySelector("#buttons-container .decimal");
+const backspaceButton = document.querySelector("#buttons-container .backspace")
 var value = 0;
 const inputState = {
     waitingForValue: 1, //can't input an operator
@@ -27,6 +28,25 @@ resultButton.addEventListener("click",displayResult);
 clearButton.addEventListener("click",clear);
 signButton.addEventListener("click",changeSign);
 decimalButton.addEventListener("click",addDecimal);
+backspaceButton.addEventListener("click",undo);
+
+function undo(){
+
+    let newContent;
+
+    if(display.textContent != "0" && displayState != inputState.displayingResult){
+
+        newContent = display.textContent.substring(0,display.textContent.length-1)
+
+        if(display.textContent.length != 1){
+            newContent = display.textContent.substring(0,display.textContent.length-1)
+            display.textContent = newContent;
+        }else{
+            display.textContent = "0";
+            displayState = inputState.waitingForValue;
+        }
+    }
+}
 
 function addDecimal(){
 
