@@ -3,6 +3,8 @@ const operatorButtons = document.querySelectorAll("#buttons-container .operator"
 const display = document.querySelector("#display .result");
 const resultButton = document.querySelector("#buttons-container .equal");
 const clearButton = document.querySelector("#buttons-container .clear");
+const signButton = document.querySelector("#buttons-container .sign");
+const decimalButton = document.querySelector("#buttons-container .decimal");
 var value = 0;
 const inputState = {
     waitingForValue: 1, //can't input an operator
@@ -23,6 +25,23 @@ numberButtons.forEach( button => button.addEventListener("click",createOperand))
 operatorButtons.forEach( button => button.addEventListener("click",addElementToExpression));
 resultButton.addEventListener("click",displayResult);
 clearButton.addEventListener("click",clear);
+signButton.addEventListener("click",changeSign);
+decimalButton.addEventListener("click",addDecimal);
+
+function addDecimal(){
+
+   if(!display.textContent.includes(".")){
+       display.textContent += ".";
+   }
+   if( displayState == inputState.displayingResult){
+    display.textContent = "0.";
+    displayState = inputState.waitingForValue;
+   }
+}
+
+function changeSign(){
+    display.textContent = -1*+display.textContent;
+}
 
 function displayResult(){
 
@@ -114,10 +133,23 @@ function convertToPostfix(infixExpression){
 
 function createOperand(){
 
+    if(display.textContent == "0" && this.getAttribute("data-value") == "0"){
+        return;
+    }
+
     if(displayState == inputState.waitingForValue || displayState == inputState.displayingResult){
-        display.textContent = this.getAttribute("data-value");
+
+        if(display.textContent == "0."){
+            display.textContent += this.getAttribute("data-value");
+        }else{
+            display.textContent = this.getAttribute("data-value");
+        }
+
     }else if(displayState == inputState.waitingForOperator){
-        display.textContent += this.getAttribute("data-value");
+
+        if(display.textContent != "0" ){
+            display.textContent += this.getAttribute("data-value");
+        }  
     }
 
     displayState = inputState.waitingForOperator;
