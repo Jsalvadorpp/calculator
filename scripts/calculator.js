@@ -36,8 +36,6 @@ function undo(){
 
     if(display.textContent != "0" && displayState != inputState.displayingResult){
 
-        newContent = display.textContent.substring(0,display.textContent.length-1)
-
         if(display.textContent.length != 1){
             newContent = display.textContent.substring(0,display.textContent.length-1)
             display.textContent = newContent;
@@ -209,5 +207,4 @@ function clear(){
     display.textContent = "0";
     value = 0;
     displayState = inputState.waitingForValue;
-
 }
